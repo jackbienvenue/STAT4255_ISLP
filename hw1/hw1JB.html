@@ -228,17 +228,123 @@ window.Quarto = {
 </tbody>
 </table>
 <p>Suppose we wish to use this data set to make a prediction for Y when X1 = X2 = X3 = 0 using K-nearest neighbors.</p>
-<section id="a-compute-the-euclidean-distance-between-each-observation-and-thetestpointx1-x2-x3-0." class="level3">
-<h3 class="anchored" data-anchor-id="a-compute-the-euclidean-distance-between-each-observation-and-thetestpointx1-x2-x3-0.">(a) Compute the Euclidean distance between each observation and thetestpoint,X1 =X2 =X3 =0.</h3>
+<section id="a-compute-the-euclidean-distance-between-each-observation-and-the-test-point-x1-x2-x3-0." class="level3">
+<h3 class="anchored" data-anchor-id="a-compute-the-euclidean-distance-between-each-observation-and-the-test-point-x1-x2-x3-0.">(a) Compute the Euclidean distance between each observation and the test point, <span class="math inline">\(X1 = X2 = X3 = 0\)</span>.</h3>
+<p>Let’s use a three-dimensional space where we model coordinates as <span class="math inline">\((X_1,X_2,X_3)\)</span>. We will obtain the following distances using 3-dimensional Euclidean distance formula: <span class="math display">\[d = \sqrt{(X_1 - X_{\text{test}})^2 + (X_2 - X_{\text{test}})^2 + (X_3 - X_{\text{test}})^2}\]</span>.</p>
+<p>Making use of this formula, we can amend our table in the following way:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Obs.</th>
+<th>X1</th>
+<th>X2</th>
+<th>X3</th>
+<th>Y</th>
+<th>Distance from test point</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>0</td>
+<td>3</td>
+<td>0</td>
+<td>Red</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>Red</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>0</td>
+<td>1</td>
+<td>3</td>
+<td>Red</td>
+<td>3.162</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>0</td>
+<td>1</td>
+<td>2</td>
+<td>Green</td>
+<td>2.236</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>-1</td>
+<td>0</td>
+<td>1</td>
+<td>Green</td>
+<td>1.414</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>Red</td>
+<td>1.732</td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="b-what-is-our-prediction-with-k-1-why" class="level3">
 <h3 class="anchored" data-anchor-id="b-what-is-our-prediction-with-k-1-why">(b) What is our prediction with K = 1? Why?</h3>
+<p>For <span class="math inline">\(K = 1\)</span> nearest neighbors, our test point <span class="math inline">\((0,0,0)\)</span> is closest to the point for observation 5, <span class="math inline">\((-1,0,1)\)</span>, and since this is the only neighbor we are taking into account, and its response value is <span class="math inline">\(\textbf{Green}\)</span>, we will take our response value for test point <span class="math inline">\((0,0,0)\)</span> to be <span class="math inline">\(\textbf{Green}\)</span>.</p>
 </section>
 <section id="c-what-is-our-prediction-with-k-3-why" class="level3">
 <h3 class="anchored" data-anchor-id="c-what-is-our-prediction-with-k-3-why">(c) What is our prediction with K = 3? Why?</h3>
+<p>For <span class="math inline">\(K = 3\)</span> nearest neighbors, test point <span class="math inline">\((0,0,0)\)</span> has nearest neighbors:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Obs.</th>
+<th>X1</th>
+<th>X2</th>
+<th>X3</th>
+<th>Y</th>
+<th>Distance from test point</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>5</td>
+<td>-1</td>
+<td>0</td>
+<td>1</td>
+<td>Green</td>
+<td>1.414</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>Red</td>
+<td>1.732</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>Red</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<p>Since we find that the majority of our neighbors have response <span class="math inline">\(Y\)</span> value as <span class="math inline">\(\textbf{Red}\)</span>, we will identify our test point as <span class="math inline">\(\textbf{Red}\)</span>.</p>
 </section>
 <section id="d-if-the-bayes-decision-boundary-in-this-problem-is-highly-non--linear-then-would-we-expect-the-best-value-for-k-to-be-large-or-small-why" class="level3">
 <h3 class="anchored" data-anchor-id="d-if-the-bayes-decision-boundary-in-this-problem-is-highly-non--linear-then-would-we-expect-the-best-value-for-k-to-be-large-or-small-why">(d) If the Bayes decision boundary in this problem is highly non- linear, then would we expect the best value for K to be large or small? Why?</h3>
+<p>For highly non-linear Bayes decision boundary, we would select a smaller <span class="math inline">\(\textbf{K}\)</span> for the modeling of our scenario given a choice. How come? The addition of nearest neighbors has something a smoothing effect on the decision boundary. Smaller <span class="math inline">\(\textbf{K}\)</span> values will allow for smaller nuances in the decision boundary to be present, while these might be smoothed out with a larger <span class="math inline">\(\textbf{K}\)</span>. This is important for non-linear data because very high relative <span class="math inline">\(\textbf{K}\)</span> values could appear to fit a decision boundary to data that looks more linear, or simpler in general, potenially not capturing the nature of the data.</p>
 </section>
 </section>
 <section id="exercise-3-islp-chapter-2-exercise-8" class="level1">
