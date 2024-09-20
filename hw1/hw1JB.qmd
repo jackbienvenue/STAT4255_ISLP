@@ -2,7 +2,9 @@
 title: "STAT4255 Homework 1"
 author: "Jack Bienvenue"
 date: "September 18th, 2024"
-format: html
+format:
+  html: default
+  pdf: default
 ---
 
 Hello Dr. Gu! This is Jack Bienvenue. I'm looking forward to a great semester of learning about Statistical Learning. This is generated with a Quarto Document in VSCode. Below are the necessary exercises for this homework assignment.
@@ -174,22 +176,135 @@ plt.show()
 ### (e) Use the boxplot() method of college to produce side-by-side boxplots of Outstate versus Private.
 
 ``` {python}
+q3edf = college[['Outstate', 'Private']]
+q3edf.boxplot(column = 'Outstate', by='Private', figsize = (8,6))
+plt.title("College Out of State Tuition vs. Privacy Status")
+plt.ylabel('Out of state Tuition ($)')
+plt.xlabel('Private Status')
 
 ```
 
 ### (f) Create a new qualitative variable, called Elite, by binning the Top10perc variable into two groups based on whether or not the proportion of students coming from the top 10% of their high school classes exceeds 50%.
 Use the value_counts() method of college['Elite'] to see how many elite universities there are. Finally, use the boxplot() method again to produce side-by-side boxplots of Outstate versus Elite.
-   college['Elite'] = pd.cut(college['Top10perc'], [0,0.5,1],
+   
+
+``` {python} 
+#Generate 'Elite'
+college['Elite'] = pd.cut(college['Top10perc'], bins=[0,50,100],
 labels=['No', 'Yes'])
 
-### (g) Use the plot.hist() method of college to produce some his- tograms with differing numbers of bins for a few of the quanti- tative variables. The command plt.subplots(2, 2) may be use- ful: it will divide the plot window into four regions so that four plots can be made simultaneously. By changing the arguments you can divide the screen up in other combinations.
+elite_counts = college['Elite'].value_counts()
+print('There are', elite_counts['Yes'], 'elite colleges in the dataset.')
+```
+
+``` {python}
+#Generate boxplots
+q3edf = college[['Outstate', 'Elite']]
+q3edf.boxplot(column = 'Outstate', by='Elite', figsize = (8,6))
+plt.title("College Out of State Tuition vs. Elite Identity")
+plt.ylabel('Out of state Tuition ($)')
+plt.xlabel('Elite Indicator')
+```
+
+### (g) Use the plot.hist() method of college to produce some his- tograms with differing numbers of bins for a few of the quanti- tative variables. 
+The command plt.subplots(2, 2) may be useful: it will divide the plot window into four regions so that four plots can be made simultaneously. By changing the arguments you can divide the screen up in other combinations.
+
+``` {python}
+fig, axs = plt.subplots(2, 2, figsize=(8, 6))
+# Histogram for 'Elite'
+axs[0, 0].hist(college['Enroll'], bins=20, color='skyblue', edgecolor='black')
+axs[0, 0].set_title('Histogram of Enrollment')
+axs[0, 0].set_xlabel('Enrollment Count')
+axs[0, 0].set_ylabel('Count')
+
+# Histogram for 'Outstate'
+axs[0, 1].hist(college['Outstate'], bins=20, color='blue', edgecolor='black')
+axs[0, 1].set_title('Histogram of Out of State Tuition')
+axs[0, 1].set_xlabel('Outstate Tuition')
+axs[0, 1].set_ylabel('Count')
+
+# Histogram for 'Apps'
+axs[1, 0].hist(college['Apps'], bins=20, color='lightgreen', edgecolor='black')
+axs[1, 0].set_title('Histogram of Applications')
+axs[1, 0].set_xlabel('Number of Applications')
+axs[1, 0].set_ylabel('Count')
+
+# Histogram for 'Room.Board'
+axs[1, 1].hist(college['Room.Board'], bins=20, color='orange', edgecolor='black')
+axs[1, 1].set_title('Histogram of Room and Board Costs')
+axs[1, 1].set_xlabel('Room and Board Cost')
+axs[1, 1].set_ylabel('Count')
+
+# Adjust layout
+plt.tight_layout()
+plt.show()
+```
+
 
 ### (h) Continue exploring the data, and provide a brief summary of what you discover.
+
+From digging deeper into this dataset we can see the presence of some interesting effects.
+
+- It seems that many colleges have relatively low application and enrollment numbers
+    - This could suggest that the college environment is made of many large colleges but many, many more small ones
+- Costs for college have some skewing to the right
+    - This means that while there is a concentration of values for the costs associated with attending college, there are some colleges whose cost is significantly higher than the average
 
 # Exercise 4 (ISLP Chapter 2 Exercise 8):
 
 ### Question 1
+The volume of the containing box in p-dimensional space can be represented simply in terms of length l as $l^p$.
+
 ### Question 2
+This is a little trickier than the previous problem. The volume of a unit "ball" in $p$ dimensions is: $$V_p = \frac{\pi^{p/2}}{\Gamma\left(\frac{p}{2} + 1\right)}$$
+
+where $V_p$ is the volume (or analog), and the Gamma function in the denominator is an important tool to determine coefficients. The definition and origin of the Gamma Function is beyond the scope of this assignment. 
+
 ### Question 3
+The ratio $\alpha(p)$ would take the form:
+$$\frac{l^p}{\frac{\pi^{p/2}}{\Gamma\left(\frac{p}{2} + 1\right)}}$$
+
+We can make a function to calculate this for varying p:
+
+``` {python}
+from scipy.special import gamma
+import numpy as np
+
+def volume_of_unit_sphere(p):
+    return (np.pi ** (p / 2)) / gamma((p / 2) + 1)
+
+def cube_sphere_ratio(cube_side_length, dimension):
+    ratio = ((cube_side_length)**dimension)/(volume_of_unit_sphere(dimension))
+
+    return ratio
+```
+
 ### Question 4
+Now, let's visualize what's going on. 
+``` {python}
+dimension_df = pd.DataFrame({
+    'Dimension': range(1,21),
+    'Ratio': np.nan
+
+})
+for p in range(1,21):
+    ratio_outcome = cube_sphere_ratio(1, p)
+    dimension_df.loc[p-1, 'Ratio'] = ratio_outcome
+
+print(dimension_df)    
+```
+
+``` {python}
+plt.figure(figsize=(10, 6))
+plt.plot(dimension_df['Dimension'], dimension_df['Ratio'], marker='o')
+plt.title('Cube/Sphere Ratio vs Dimension')
+plt.xlabel('Dimension')
+plt.ylabel('"Cube Volume" to "Sphere Volume" Ratio')
+plt.xticks(dimension_df['Dimension'])  
+plt.grid()
+plt.show()
+```
+
 ### Question 5
+
+After modeling the situation, it does appear that the so-called Curse of Dimensionality is in effect. Here, it is clear that as the dimension is expanded, the volume of cube shapes become much larger relative to the sphere shape. This means that given randomly distributed data, we will see a behavior of less and less data falling within the inscribed "sphere" as the dimension rises. 
