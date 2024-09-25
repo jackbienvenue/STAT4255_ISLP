@@ -351,22 +351,62 @@ Based upon this linear model,
 ### (d) Create a scatterplot displaying the relationship between x and y. Comment on what you observe.
 
 ``` {python}
+plt.scatter(ex4df['x'], ex4df['y'], color='green', label='Generated Data')
 
-
+plt.title("Generated Random Data")
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.legend()
+plt.grid()
+plt.show()
 ```
+
+It appears as if a linear relationship is built into the way we designed our program. This makes sense, as y is dependent on randomly generated x in linear fashion in our model.
 
 ### (e) Fit a least squares linear model to predict y using x. Comment on the model obtained. How do βˆ0 and βˆ1 compare to β0 and β1?
 
 ``` {python}
 
+X = ex4df[['x']]
+X = sm.add_constant(X)
+y = ex4df['y']
 
+ex4model1 = sm.OLS(y, X).fit()
+
+print(ex4model1.summary())
 ```
+
+The values we get are:
+
+- $\hat{\beta_0} = -0.9632$
+    - versus $\beta_0 = -1$
+- $\hat{\beta_1} = 0.5239$
+    - versus $\beta_1 = 0.5$
 
 ### (f) Display the least squares line on the scatterplot obtained in (d). Draw the population regression line on the plot, in a different color. Use the legend() method of the axes to create an appropriate legend.
 
 ``` {python}
+plt.scatter(ex4df['x'], ex4df['y'], color='green', label='Generated Data')
 
+# least squares line
+x = ex4df['x']
+y = ex4df['y']
+m, b = np.polyfit(x, y, 1)  # m = slope, b = intercept
 
+# Points for the least squares line to follow
+x_line = np.linspace(x.min(), x.max(), 100)
+y_line = m * x_line + b
+
+# Plot the least squares line
+plt.plot(x_line, y_line, color='red', label='Least Squares Line')
+
+# Add titles and labels
+plt.title("Generated Random Data with Least Squares Line")
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.legend()
+plt.grid()
+plt.show()
 ```
 
 ### (g) Now fit a polynomial regression model that predicts y using x and x2. Is there evidence that the quadratic term improves the model fit? Explain your answer.
