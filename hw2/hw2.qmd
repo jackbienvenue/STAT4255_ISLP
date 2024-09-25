@@ -324,7 +324,7 @@ x = np.random.normal(0, 1, 100) # N(0,1), 100 observations
 ### (b) Using the normal() method, create a vector, eps, containing 100 observations drawn from a N(0,0.25) distribution—a normal distribution with mean zero and variance 0.25.
 
 ``` {python}
-eps = np.random.normal(0, 0.5, 100)
+eps = np.random.normal(0, 0.25, 100)
 ```
 
 ### (c) Using x and eps, generate a vector y according to the model Y =−1+0.5X+ε. What is the length of the vector y? What are the values of β0 and β1 in this linear model?
@@ -432,17 +432,33 @@ print(quad_model.summary())
 
 ```
 
+The p-value for the squared term is extremely high. By no criteria would we accept this term into the model. Because of this, we can say that the inclusion of $X^2$ into the model is not helpful, regardless of whether it improves fit. Including unnecessary higher order polynomial terms like this can lead to overfitting. 
+
 ### (h) Repeat (a)–(f) after modifying the data generation process in such a way that there is less noise in the data. The model (3.39) should remain the same. You can do this by decreasing the variance of the normal distribution used to generate the error term ε in (b). Describe your results.
 
 I will elect not to rewrite all the code for brevity and instead just report on the changes. 
 
-For this problem, I changed the variance to !!!!!!!!!!!!
+For this problem, I changed the variance to 0.05.
 
 After executing this, I observed the following:
-- 
-- 
-- 
-- 
+
+``` {python}
+low_variance_results = {
+    "Variable": ["const", "x"],
+    "Coefficient": [-0.9926, 0.5048],
+    "Std. Error": [0.005, 0.005],
+    "t": [-211.252, 95.309],
+    "P > |t|": [0.000, 0.000],
+    "[0.025": [-1.002, 0.494],
+    "0.975]": [-0.983, 0.515]
+}
+
+low_var_results_df = pd.DataFrame(low_variance_results)
+
+print(low_var_results_df)
+```
+
+As compared to the original model, we observe slightly lower expected values for the coefficients, a lower standard error for both coefficients, and a contraction of the confidence intervals. 
 
 ### (i) Repeat (a)–(f) after modifying the data generation process in such a way that there is more noise in the data. The model (3.39) should remain the same. You can do this by increasing the variance of the normal distribution used to generate the error term ε in (b). Describe your results.
 
@@ -463,10 +479,10 @@ high_variance_results = {
 
 high_var_results_df = pd.DataFrame(high_variance_results)
 
-# Display the DataFrame as a table
-import quirk
-print(quirk.table(high_var_results_df))
+print(high_var_results_df)
 ```
+
+As compared to the original model, we observe slightly higher expected values for the coefficients, a larger standard error for both coefficients, and an expansion of the confidence intervals. 
 
 ### (j) What are the confidence intervals for β0 and β1 based on the original data set, the noisier data set, and the less noisy data set? Comment on your results.
 
@@ -475,16 +491,18 @@ Confidence intervals for:
     - Original data set:
         - -1.010 to -0.917
     - Noiser data set:
-        -
+        - -1.020 to -0.833
     - Less noisy data set:
-        -
+        - -1.002 to -0.983
 - $\beta_1$
     - Original data set:
         - 0.471 to 0.576
     - Noiser data set:
-        -
+        - 0.443 to 0.653
     - Less noisy data set:
-        -
+        - 0.494 to 0.515
+
+As observed in the previous question, lower variance leads to a contraction of the interval, and high variance leads to expansion of it. 
 
 
 ## Exercise 5 - 3.15
