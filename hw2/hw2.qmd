@@ -412,30 +412,65 @@ plt.show()
 ### (g) Now fit a polynomial regression model that predicts y using x and x2. Is there evidence that the quadratic term improves the model fit? Explain your answer.
 
 ``` {python}
+# Let's just write a function to return to later:
+def fit_quadratic_model(data):
+    data['X_squared'] = data['X'] ** 2
+    X = sm.add_constant(data[['X', 'X_squared']])  # Adds intercept term
+    model = sm.OLS(data['Y'], X).fit()
+    predictions = model.predict(X)
+    rss = np.sum((data['Y'] - predictions) ** 2)
+    return rss, model
 
+#To allow fxn to handle our data:
+ex4df.rename(columns={'x': 'X'}, inplace=True)
+ex4df.rename(columns={'y': 'Y'}, inplace=True)
+
+# Model construction
+quad_rss, quad_model = fit_quadratic_model(ex4df) ###
+
+print(quad_model.summary())
 
 ```
 
-### (h) Repeat (a)–(f) after modifying the data generation process in such a way that there is less noise in the data. The model (3.39) should remain the same. You can do this by decreasing the vari- ance of the normal distribution used to generate the error term ε in (b). Describe your results.
+### (h) Repeat (a)–(f) after modifying the data generation process in such a way that there is less noise in the data. The model (3.39) should remain the same. You can do this by decreasing the variance of the normal distribution used to generate the error term ε in (b). Describe your results.
 
-``` {python}
+I will elect not to rewrite all the code for brevity and instead just report on the changes. 
 
+For this problem, I changed the variance to !!!!!!!!!!!!
 
-```
+After executing this, I observed the following:
+- 
+- 
+- 
+- 
 
 ### (i) Repeat (a)–(f) after modifying the data generation process in such a way that there is more noise in the data. The model (3.39) should remain the same. You can do this by increasing the variance of the normal distribution used to generate the error term ε in (b). Describe your results.
 
-``` {python}
+For this problem, I changed the variance to !!!!!!!!!!!!
 
-
-```
+After executing this, I observed the following:
+- 
+- 
+- 
+- 
 
 ### (j) What are the confidence intervals for β0 and β1 based on the original data set, the noisier data set, and the less noisy data set? Comment on your results.
 
-``` {python}
-
-
-```
+Confidence intervals for:
+- $\beta_0$:
+    - Original data set:
+        - -1.010 to -0.917
+    - Noiser data set:
+        -
+    - Less noisy data set:
+        -
+- $\beta_1$
+    - Original data set:
+        - 0.471 to 0.576
+    - Noiser data set:
+        -
+    - Less noisy data set:
+        -
 
 
 ## Exercise 5 - 3.15
@@ -461,7 +496,7 @@ Import dataset:
 
 ```
 
-### (c) How do your results from (a) compare to your results from (b)? Create a plot displaying the univariate regression coefficients from (a) on the x-axis, and the multiple regression coefficients from (b) on the y-axis. That is, each predictor is displayed as a single point in the plot. Its coefficient in a simple linear regres- sion model is shown on the x-axis, and its coefficient estimate in the multiple linear regression model is shown on the y-axis.
+### (c) How do your results from (a) compare to your results from (b)? Create a plot displaying the univariate regression coefficients from (a) on the x-axis, and the multiple regression coefficients from (b) on the y-axis. That is, each predictor is displayed as a single point in the plot. Its coefficient in a simple linear regression model is shown on the x-axis, and its coefficient estimate in the multiple linear regression model is shown on the y-axis.
 
 ``` {python}
 
