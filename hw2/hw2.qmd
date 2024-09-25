@@ -198,6 +198,7 @@ plt.show()
 Again, we find by testing that we attain our hypothesized result.
 
 ## Exercise 3 - 3.10 (a-g)
+
 **This question should be answered using the Carseats data set.**
 
 Let's begin by importing the dataset:
@@ -268,13 +269,41 @@ where:
 
 ### (d) For which of the predictors can you reject the null hypothesis H0 :βj =0?
 
-We can reject the null hypothesis that $H_0: \beta_j = 0$ for coefficients
+We can reject the null hypothesis that $H_0: \beta_j = 0$ for coefficients $\beta_0$, $\beta_1$, and $\beta_3$. The p-values are less than 0.001, meaning that they would be rejected under any reasonable threshold. 
 
 ### (e) On the basis of your response to the previous question, fit a smaller model that only uses the predictors for which there is evidence of association with the outcome.
 
+Let's fit the new model, this time excluding the "Urban" term:
+
+``` {python}
+# Here, we can use our linear model generating function again, but we'll clip out the unnecessary column
+
+newdata = Carseats.drop(columns=['Urban'])
+
+X = newdata[['Price', 'US']]
+X = sm.add_constant(X)
+y = newdata['Sales']
+
+model_drop_urban = sm.OLS(y, X).fit()
+
+print(model_drop_urban.summary())
+
+```
+
 ### (f) How well do the models in (a) and (e) fit the data?
 
+It appears that both models fit the data in a way that is very similar to one another. The coefficients are not changed very much from one model to another and $R^2$ is essentially the same for each model. Upon inspection of the models, it seems that they both have useful components, but that the included variables do not provide a holistic review of the factors that influence sales, since the whole model's $R^2$ value is around 24%. 
+
 ### (g) Using the model from (e), obtain 95% confidence intervals for the coefficient(s).
+
+Conveniently, the 95% confidence intervals for the values of the coefficients are included in the printout. We can see for:
+
+- $\beta_0$
+    - The 95% confidence interval ranges from 11.790 to 14.271
+- $\beta_1$
+    - The 95% confidence interval ranges from -0.065 to -0.044
+- $\beta_3$
+    - The 95% confidence interval ranges from 0.692 to 1.708
 
 ## Exercise 4 - 3.13
 
