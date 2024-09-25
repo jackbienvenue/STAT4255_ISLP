@@ -202,7 +202,7 @@ Again, we find by testing that we attain our hypothesized result.
 
 Let's begin by importing the dataset:
 ``` {python}
-Carseats = load_data('Carseats') # Using built in ISLP functionality
+Carseats = load_data('Carseats') # Using built-in ISLP functionality
 ```
 
 Let's take a peek at what the dataset looks like:
@@ -216,18 +216,59 @@ print(Carseats.head())
 Let's build this out:
 
 ``` {python}
+## Cleaning
+# Categorical Variable handling
+Carseats['Urban'] = Carseats['Urban'].map({'Yes': 1, 'No': 0})
+Carseats['US'] = Carseats['US'].map({'Yes': 1, 'No': 0})
 
+# Define responses and predictor
+X = Carseats[['Price', 'Urban', 'US']]
+y = Carseats['Sales']
+
+# Add intercept
+X = sm.add_constant(X)
+
+# Fit MLR model
+model = sm.OLS(y, X).fit()
+
+print(model.summary())
 ```
 
 ### (b) Provide an interpretation of each coefficient in the model. Be careful—some of the variables in the model are qualitative!
 
-``` {python}
+- Price
+    - Based upon our model, we find that for every dollar increase in price of the carseat, we observe a decline in sales by 0.0545, on average, in this linear model. Our units for sales are thousands of unit sales, so for each increase in price by $1, we would expect a reduction of 54.5 sales. 
 
-```
+- Urban
+    - *Urban* indicates whether the retailer for the car seats are in an urban or rural location. This variable is encoded in binary fasion. We find that our model estimates that being in an urban location would reduce the expected sales by 21.9 units versus a rural area, all else equal. However, by any reasonable benchmark for p-value, this variable would not be considered significant. 
+
+- US
+    - *US* indicates whether the retailer for the car seats is in the US. We find that our estimates that being in the US increases sales by 1200.6 units on average in this linear model versus not being in the US. This could be due to many things, perhaps regulations requiring car seats or perhaps attitudes towards car seats that make it more likely for parents in the United States to buy them.
 
 ### (c) Write out the model in equation form, being careful to handle the qualitative variables properly.
 
+We can write out our formula for our model in the following way:
+
+$$  Y = \beta_0 + \beta_1*X_1 + \beta_2*X_2 + \beta_3*X_3  $$
+
+where:
+
+- $\beta_0$ represents the intercept
+- $\beta_1$ represents the coefficient for predictor 'Price'
+- $\beta_2$ represents the coefficient for predictor 'Urban'
+- $\beta_3$ represents the coefficient for predictor 'US'
+
+- $X_1$ represents the price, in US dollars, of the car seat
+- $X_2$ represents the urban/rural status
+    - $X_2$ = 1 indicates urban
+    - $X_2$ = 0 indicates rural
+- $X_3$ represents the domestic/foreign selling status
+    - $X_3$ = 1 indicates selling in US
+    - $X_3$ = 0 indicates selling outside US
+
 ### (d) For which of the predictors can you reject the null hypothesis H0 :βj =0?
+
+We can reject the null hypothesis that $H_0: \beta_j = 0$ for coefficients
 
 ### (e) On the basis of your response to the previous question, fit a smaller model that only uses the predictors for which there is evidence of association with the outcome.
 
