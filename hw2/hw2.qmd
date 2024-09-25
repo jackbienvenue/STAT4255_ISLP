@@ -511,16 +511,55 @@ This problem involves the Boston data set, which we saw in the lab for this chap
 
 Import dataset:
 ``` {python}
-
+Boston_df = load_data('Boston')
+print(Boston_df.head())
 ```
 
 ### (a) For each predictor, fit a simple linear regression model to predict the response. Describe your results. In which of the models is there a statistically significant association between the predictor and the response? Create some plots to back up your assertions.
 
+Creating 12 separate SLR models will get tedious so let's handle this more efficiently:
 ``` {python}
+response_variable = 'crim'
+predictors = Boston_df.columns.drop(response_variable)
 
+results = {}
 
+for predictor in predictors:
+    X = Boston_df[[predictor]]  # Selecting the predictor
+    y = Boston_df[response_variable]  # Selecting the response variable
+
+    # Adding a constant term for the intercept
+    X = sm.add_constant(X)
+
+    # Fitting the model
+    model = sm.OLS(y, X).fit()
+
+    # Storing the results
+    results[predictor] = {
+        'coef': model.params,
+        'pvalues': model.pvalues,
+        'summary': model.summary()
+    }
+
+# Printing the results
+for predictor, metrics in results.items():
+    print(f"Results for {predictor}:")
+    print(metrics['summary'])
+    print("\n")
 ```
 
+
+From these lengthy outputs, we see that potentially, we could see significance for the following predictors:
+
+- 'zn'
+    - Description: Proportion of residential land zoned for lots over 25,000 sq.ft.
+    - p-value < 0.000
+- 'indus'
+    
+    - p-value < 0.000
+- 
+- 
+- 
 ### (b) Fit a multiple regression model to predict the response using all of the predictors. Describe your results. For which predictors can we reject the null hypothesis H0 : βj = 0?
 
 ``` {python}
