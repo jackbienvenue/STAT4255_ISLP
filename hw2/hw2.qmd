@@ -585,9 +585,35 @@ I omitted printing the outputs for brevity. In summary, we see that we could see
 We'll fit this model in the following way:
 
 ``` {python}
+# Let's start by designing the predictors and responses:
+X = Boston_df[['zn','indus','nox','rm','age','dis','rad','tax','ptratio','lstat','medv']]
+y = Boston_df['crim']
 
+# Putting together data for significant predictors only
+sig_boston_df = pd.concat([X, y], axis=1) 
 
+X = sm.add_constant(X)
+ex5b_model = sm.OLS(y, X).fit()
+
+results = {
+    'coef': ex5b_model.params,
+    'pvalues': ex5b_model.pvalues,
+    'summary': ex5b_model.summary()
+}
+
+print(ex5b_model.summary())
 ```
+
+Assuming that the question seeks an $\alpha = 0.05$, we can reject the null hypothesis which stated $\beta_j = 0$ for:
+- zn
+    - Proportion of residential land zoned for lots over 25,000 sq.ft.
+- dis
+    - Weighted mean of distances to five Boston employment centres.
+- rad
+    - Index of accessibility to radial highways.
+- medv
+    - Median value of owner-occupied homes in $1000s.
+
 
 ### (c) How do your results from (a) compare to your results from (b)? Create a plot displaying the univariate regression coefficients from (a) on the x-axis, and the multiple regression coefficients from (b) on the y-axis. That is, each predictor is displayed as a single point in the plot. Its coefficient in a simple linear regression model is shown on the x-axis, and its coefficient estimate in the multiple linear regression model is shown on the y-axis.
 
@@ -600,9 +626,85 @@ Let's plot this out:
 
 ### (d) Is there evidence of non-linear association between any of the predictors and the response? To answer this question, for each predictor X, fit a model of the form Y =β0 +β1X+β2X2 +β3X3 +ε.
 
-Luckily for this problem, we defined a function earlier in this homework assignment to generate cubic MLR functions. Let's put that to use again.
+Luckily for this problem, we defined a function earlier in this homework assignment to generate cubic MLR functions. Let's put that to use again. We'll combine this with the iterative generation method we used for part (a).
 
 ``` {python}
 
+# Assuming Boston_df is already defined
+response_variable = 'crim'
+predictors = Boston_df.columns.drop(response_variable)
+
+results = {}
+
+for predictor in predictors:
+    X = Boston_df[[predictor]].copy()  # Create a copy to avoid SettingWithCopyWarning
+    y = Boston_df[response_variable]  # Selecting the response variable
+
+    # Adding polynomial terms using .assign() for clarity
+    X = X.assign(
+        X_squared=X[predictor] ** 2,
+        X_cubed=X[predictor] ** 3
+    )
+    X = sm.add_constant(X)  # Adds intercept term
+
+    # Fitting the model
+    model = sm.OLS(y, X).fit()
+
+    # Storing the results
+    results[predictor] = {
+        'coef': model.params,
+        'pvalues': model.pvalues,
+        'summary': model.summary()
+    }
+
+    # Uncomment to print the summary for each predictor
+    # print(f"Summary for predictor '{predictor}':")
+    # print(model.summary())
+    # print("\n" + "-" * 80 + "\n")
 
 ```
+
+Again, I will cut print statements out of the document for brevity, but in summary, the following variables demonstrate p-values that could lead to rejection of null hypotheses with plausible thresholds. Note that for certain predictors, there was high collinearity observed between the powers of the data as predictors. 
+
+- 'indus'
+    - Description: Proportion of non-retail business acres per town.
+    - \(X^2\)
+        - p-value of coefficient < 0.000
+    - \(X^3\)
+        - p-value of coefficient < 0.000
+- 'nox'
+    - Description: Nitrogen oxides concentration (parts per 10 million).
+    - \(X^2\)
+        - p-value of coefficient < 0.000
+    - \(X^3\)
+        - p-value of coefficient < 0.000
+- 'age'
+    - Description: Proportion of owner-occupied units built prior to 1940.
+    - \(X^2\)
+        - p-value of coefficient = 0.047
+    - \(X^3\)
+        - p-value of coefficient = 0.007
+- 'dis'
+    - Description: Weighted mean of distances to five Boston employment centres.
+    - \(X^2\)
+        - p-value of coefficient < 0.000
+    - \(X^3\)
+        - p-value of coefficient < 0.000
+- 'ptratio'
+    - Description: Pupil-teacher ratio by town.
+    - \(X^2\)
+        - p-value of coefficient = 0.004
+    - \(X^3\)
+        - p-value of coefficient = 0.006
+- 'lstat'
+    - Description: Lower status of the population (percent).
+    - \(X^2\)
+        - p-value of coefficient = 0.065
+    - \(X^3\)
+        - p-value of coefficient = 0.130
+- 'medv'
+    - Description: Median value of owner-occupied homes in $1000s.
+    - \(X^2\)
+        - p-value of coefficient < 0.000
+    - \(X^3\)
+        - p-value of coefficient < 0.000
