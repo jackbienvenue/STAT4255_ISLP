@@ -2,7 +2,7 @@
 title: "STAT4255 Homework 2"
 author: "Jack Bienvenue"
 date: "2024-09-24"
-format: html
+format: pdf
 ---
 
 Hello! In this assignment, we will be working on several exercises from the ISLP book:
@@ -36,12 +36,12 @@ Suppose we have a data set with five predictors:
 
 Suppose we use least squares to fit the model, and get:
 
-- βˆ0 = 50,
-- βˆ1 = 20,
-- βˆ2 = 0.07,
-- βˆ3 = 35,
-- βˆ4 = 0.01,
-- βˆ5 = −10.
+- $\beta^0 = 50$
+- $\beta^1 = 20$
+- $\beta^2 = 0.07$
+- $\beta^3 = 35$
+- $\beta^4 = 0.01$
+- $\beta^5 = -10$
 
 ### (a) Which answer is correct, and why?
 
@@ -102,7 +102,9 @@ def fit_linear_model(data):
 def fit_cubic_model(data):
     data['X_squared'] = data['X'] ** 2
     data['X_cubed'] = data['X'] ** 3
-    X = sm.add_constant(data[['X', 'X_squared', 'X_cubed']])  # Adds intercept term
+    X = sm.add_constant(data[['X', 'X_squared', 'X_cubed']])  
+        # Adds intercept term ^
+
     model = sm.OLS(data['Y'], X).fit()
     predictions = model.predict(X)
     rss = np.sum((data['Y'] - predictions) ** 2)
@@ -127,11 +129,13 @@ print(f"Cubic Model RSS: {cubic_rss:.2f}")
 plt.scatter(data['X'], data['Y'], alpha=0.7, label='Data Points')
 
 # Linear Model
-plt.plot(data['X'], lin_model.predict(sm.add_constant(data['X'])), color='red', label='Linear Fit', linewidth=2)
+plt.plot(data['X'], lin_model.predict(sm.add_constant(data['X'])), 
+    color='red', label='Linear Fit', linewidth=2)
 
 # Cubic Model
 X_sorted = np.sort(data['X'])
-Y_cubic = cubic_model.predict(sm.add_constant(pd.DataFrame({'X': X_sorted, 'X_squared': X_sorted**2, 'X_cubed': X_sorted**3})))
+Y_cubic = cubic_model.predict(sm.add_constant(pd.DataFrame({'X': X_sorted, 
+    'X_squared': X_sorted**2, 'X_cubed': X_sorted**3})))
 plt.plot(X_sorted, Y_cubic, color='green', label='Cubic Fit', linewidth=2)
 
 plt.title("Generated Linear Data with Fits")
@@ -158,7 +162,7 @@ def generate_log_data(n=100, a=2, b=1, noise_variance=1):
     # Generate predictor values (start after zero to prevent log(0))
     X = np.random.uniform(0.1, 10, n) 
 
-    noise = np.random.normal(0, noise_variance, n)  # Normally distributed noise in data
+    noise = np.random.normal(0, noise_variance, n) 
     Y = a * np.log(X) + b + noise
     
     # DataFrame synthesis:
@@ -179,11 +183,13 @@ print(f"Cubic Model RSS: {cubic_rss:.2f}")
 plt.scatter(log_data['X'], log_data['Y'], alpha=0.7, label='Data Points')
 
 # Linear Model
-plt.plot(log_data['X'], lin_model.predict(sm.add_constant(log_data['X'])), color='red', label='Linear Fit', linewidth=2)
+plt.plot(log_data['X'], lin_model.predict(sm.add_constant(log_data['X'])), 
+    color='red', label='Linear Fit', linewidth=2)
 
 # Cubic Model
 X_sorted = np.sort(log_data['X'])
-Y_cubic = cubic_model.predict(sm.add_constant(pd.DataFrame({'X': X_sorted, 'X_squared': X_sorted**2, 'X_cubed': X_sorted**3})))
+Y_cubic = cubic_model.predict(sm.add_constant(pd.DataFrame({'X': X_sorted, 
+    'X_squared': X_sorted**2, 'X_cubed': X_sorted**3})))
 plt.plot(X_sorted, Y_cubic, color='green', label='Cubic Fit', linewidth=2)
 
 plt.title("Generated Linear Data with Fits")
@@ -276,7 +282,8 @@ We can reject the null hypothesis that $H_0: \beta_j = 0$ for coefficients $\bet
 Let's fit the new model, this time excluding the "Urban" term:
 
 ``` {python}
-# Here, we can use our linear model generating function again, but we'll clip out the unnecessary column
+# Here, we can use our linear model generating function again, 
+# but we'll clip out the unnecessary column
 
 newdata = Carseats.drop(columns=['Urban'])
 
@@ -540,45 +547,62 @@ for predictor in predictors:
         'pvalues': model.pvalues,
         'summary': model.summary()
     }
-
+    #print(f"Summary for predictor '{predictor}':")
+    #print(model.summary())
+    #print("\n" + "-" * 80 + "\n")
 ```
 
 
-I omitted printing the outputs for brevity. In summary, we see that we could see significance for the following predictors:
+I omitted printing the outputs for brevity. In summary, we find significance for all predictors except for 'chas'.
 
 - 'zn'
     - Description: Proportion of residential land zoned for lots over 25,000 sq.ft.
     - p-value < 0.000
+    - Coefficient on linear term: -0.0739
 - 'indus'
     - Description: Proportion of non-retail business acres per town.
     - p-value < 0.000
+    - Coefficient on linear term: 0.5098
+- 'chas'
+    - Description: Charles River dummy variable (=1 if tract bounds river; 0 otherwise)
+    - p-value = 0.209
+    - Coefficient on linear term: -1.8928
 - 'nox'
     - Description: Nitrogen oxides concentration (parts per 10 million).
     - p-value < 0.000
+    - Coefficient on linear term: 31.2485
 - 'rm'
     - Description: Average number of rooms per dwelling.
     - p-value < 0.000
+    - Coefficient on linear term: -2.6841
 - 'age'
     - Description: Proportion of owner-occupied units built prior to 1940.
     - p-value < 0.000
+    - Coefficient on linear term: 0.1078
 - 'dis'
     - Description: Weighted mean of distances to five Boston employment centres.
     - p-value < 0.000
+    - Coefficient on linear term: -1.5509
 - 'rad'
     - Description: Index of accessibility to radial highways.
     - p-value < 0.000
+    - Coefficient on linear term: 0.6179
 - 'tax'
     - Description: Full-value property-tax rate per $10,000.
     - p-value < 0.000
+    - Coefficient on linear term: 0.0297
 - 'ptratio'
     - Description: Pupil-teacher ratio by town.
     - p-value < 0.000
+    - Coefficient on linear term: 1.1520
 - 'lstat'
     - Description: Lower status of the population (percent).
     - p-value < 0.000
+    - Coefficient on linear term: 0.5488
 - 'medv'
     - Description: Median value of owner-occupied homes in $1000s.
     - p-value < 0.000
+    - Coefficient on linear term: -0.3632
 
 ### (b) Fit a multiple regression model to predict the response using all of the predictors. Describe your results. For which predictors can we reject the null hypothesis H0 : βj = 0?
 
@@ -586,7 +610,8 @@ We'll fit this model in the following way:
 
 ``` {python}
 # Let's start by designing the predictors and responses:
-X = Boston_df[['zn','indus','nox','rm','age','dis','rad','tax','ptratio','lstat','medv']]
+X = Boston_df[['zn','indus','chas','nox','rm',
+    'age','dis','rad','tax','ptratio','lstat','medv']]
 y = Boston_df['crim']
 
 # Putting together data for significant predictors only
@@ -617,11 +642,54 @@ Assuming that the question seeks an $\alpha = 0.05$, we can reject the null hypo
 
 ### (c) How do your results from (a) compare to your results from (b)? Create a plot displaying the univariate regression coefficients from (a) on the x-axis, and the multiple regression coefficients from (b) on the y-axis. That is, each predictor is displayed as a single point in the plot. Its coefficient in a simple linear regression model is shown on the x-axis, and its coefficient estimate in the multiple linear regression model is shown on the y-axis.
 
+We find that we select far fewer variables based upon our MLR versus the analysis of distinct SLRs. 
+
 Let's plot this out:
 
 ``` {python}
+a_coefs = pd.Series([
+    -0.0739,  # zn
+    0.5098,   # indus
+    -1.8928,  # chas
+    31.2485,  # nox
+    -2.6841,  # rm
+    0.1078,   # age
+    -1.5509,  # dis
+    0.6179,   # rad
+    0.0297,   # tax
+    1.1520,   # ptratio
+    0.5488,   # lstat
+    -0.3632   # medv
+])
 
+b_coefs = pd.Series([
+    0.0457,   # zn
+    -0.0584,  # indus
+    -0.8254,  # chas
+    -9.9576,  # nox
+    0.6289,   # rm
+    -0.0008,  # age
+    -1.0122,  # dis
+    0.6125,   # rad
+    -0.0038,  # tax
+    -0.3041,  # ptratio
+    0.1388,   # lstat
+    -0.2201   # medv
+])
 
+# Create the plot
+plt.figure(figsize=(10, 6))
+plt.scatter(a_coefs, b_coefs, color='blue')
+
+# Add labels and title
+plt.xlabel('Univariate Regression Coefficients (a)')
+plt.ylabel('Multiple Regression Coefficients (b)')
+plt.title('Comparison of Univariate and Multiple Regression Coefficients')
+plt.axhline(0, color='grey', linestyle='--', lw=0.5)
+plt.axvline(0, color='grey', linestyle='--', lw=0.5)
+
+plt.grid()
+plt.show()
 ```
 
 ### (d) Is there evidence of non-linear association between any of the predictors and the response? To answer this question, for each predictor X, fit a model of the form Y =β0 +β1X+β2X2 +β3X3 +ε.
@@ -637,7 +705,7 @@ predictors = Boston_df.columns.drop(response_variable)
 results = {}
 
 for predictor in predictors:
-    X = Boston_df[[predictor]].copy()  # Create a copy to avoid SettingWithCopyWarning
+    X = Boston_df[[predictor]].copy()  # Make copy, no SettingWithCopyWarning
     y = Boston_df[response_variable]  # Selecting the response variable
 
     # Adding polynomial terms using .assign() for clarity
@@ -658,26 +726,29 @@ for predictor in predictors:
     }
 
     # Uncomment to print the summary for each predictor
-    # print(f"Summary for predictor '{predictor}':")
-    # print(model.summary())
-    # print("\n" + "-" * 80 + "\n")
+    #print(f"Summary for predictor '{predictor}':")
+    #print(model.summary())
+    #print("\n" + "-" * 80 + "\n")
 
 ```
 
 Again, I will cut print statements out of the document for brevity, but in summary, the following variables demonstrate p-values that could lead to rejection of null hypotheses with plausible thresholds. Note that for certain predictors, there was high collinearity observed between the powers of the data as predictors. 
 
+- 'zn' *Not significant for higher order terms*
 - 'indus'
     - Description: Proportion of non-retail business acres per town.
     - \(X^2\)
         - p-value of coefficient < 0.000
     - \(X^3\)
         - p-value of coefficient < 0.000
+- 'chas' *Not significant for higher order terms*
 - 'nox'
     - Description: Nitrogen oxides concentration (parts per 10 million).
     - \(X^2\)
         - p-value of coefficient < 0.000
     - \(X^3\)
         - p-value of coefficient < 0.000
+- 'rm' *Not significant for higher order terms*
 - 'age'
     - Description: Proportion of owner-occupied units built prior to 1940.
     - \(X^2\)
@@ -690,6 +761,8 @@ Again, I will cut print statements out of the document for brevity, but in summa
         - p-value of coefficient < 0.000
     - \(X^3\)
         - p-value of coefficient < 0.000
+- 'rad' *Not significant for higher order terms*
+- 'tax' *Not significant for higher order terms*
 - 'ptratio'
     - Description: Pupil-teacher ratio by town.
     - \(X^2\)
